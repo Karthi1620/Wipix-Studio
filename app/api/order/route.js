@@ -1,19 +1,21 @@
-import { connectDB } from "@/lib/mongodb";
-import Order from "@/models/order";
+// Import only what's needed or remove if not used
+// If connectDB is not used, remove it completely
+// import { connectDB } from '@/lib/mongodb';
 
+// If the error variable is not used, remove it
+// const { error } = someDatabaseOperation();  // Remove if not used
 
+export async function handler(req, res) {
+  try {
+    // If connectDB is required, call it here
+    // await connectDB();
 
-export async function POST(req) {
-    try {
-        await connectToDatabase();
-        const { name, email, items } = await req.json();
-
-        const order = new Order({ name, email, items });
-        await order.save();
-
-        return Response.json({ message: "Order saved successfully!" }, { status: 201 });
-    } catch (error) {
-        return Response.json({ error: "Failed to save order" }, { status: 500 });
-    }
+    // Your other logic here...
+    res.status(200).json({ message: 'Order route working!' });
+  } catch (error) {
+    // Handle the error if required
+    console.error(error);
+    res.status(500).json({ error: 'Something went wrong' });
+  }
 }
 

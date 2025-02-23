@@ -1,26 +1,15 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+// app/api/orders/route.js
+import { connectToDatabase } from '../../../lib/mongodb';
 
-// import { connectDB } from '@/lib/mongodb'; // Keep the import if you're planning to use it later
-
-// GET method
-export async function GET(req, res) {
+export async function GET(req) {
   try {
-    // Your API logic for GET request
-    res.status(200).json({ message: 'Order route GET working!' });
+    const { db } = await connectToDatabase();
+    
+    const orders = await db.collection('orders').find({}).toArray();
+    return new Response(JSON.stringify({ orders }), { status: 200 });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Something went wrong' });
-  }
-}
-
-// POST method
-export async function POST(req, res) {
-  try {
-    // Your API logic for POST request
-    res.status(200).json({ message: 'Order route POST working!' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Something went wrong' });
+    console.error('Error fetching orders:', error);
+    return new Response(JSON.stringify({ message: 'Failed to fetch orders' }), { status: 500 });
   }
 }
 

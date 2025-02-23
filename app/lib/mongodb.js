@@ -1,37 +1,34 @@
 // lib/mongodb.js
-import mongoose from 'mongoose';
+import { MongoClient } from 'mongodb';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = "mongodb+srv://sivakarthikeyan978:9I9HqAxDwEOPbauL@cluster0.n9k1c.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";  // Replace with your MongoDB URI
+const DB_NAME = 'wipix-studio';
+
+let cachedClient = null;
+let cachedDb = null;
 
 if (!MONGODB_URI) {
-  throw new Error(
-    'Please define the MONGODB_URI environment variable inside .env.local'
-  );
+  throw new Error('Please define the MONGODB_URI');
 }
 
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
-
-async function connect() {
-  if (cached.conn) {
-    return cached.conn;
+export async function connectToDatabase() {
+  // If the client and database are already cached, return them
+  if (cachedClient && cachedDb) {
+    return { client: cachedClient, db: cachedDb };
   }
 
-  if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,
-    };
+  // Otherwise, create a new client and connect
+  const client = await MongoClient.connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      return mongoose;
-    });
-  }
-  cached.conn = await cached.promise;
-  return cached.conn;
+  const db = client.db(DB_NAME);
+
+  // Cache the client and db to avoid new connections on every request
+  cachedClient = client;
+  cachedDb = db;
+
+  return { client, db };
 }
-
-export default connect;
 

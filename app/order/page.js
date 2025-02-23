@@ -1,73 +1,36 @@
 // app/order/page.js
-'use client';
 
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-const OrderPage = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [orderDetails, setOrderDetails] = useState('');
-  const [message, setMessage] = useState('');
+const OrdersPage = () => {
+  const [orders, setOrders] = useState([]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const response = await fetch('/api/order', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, email, orderDetails }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      setMessage('Order placed successfully!');
-      setName('');
-      setEmail('');
-      setOrderDetails('');
-    } else {
-      setMessage('Failed to place order. Please try again.');
-    }
-  };
+  useEffect(() => {
+    const fetchOrders = async () => {
+      const response = await fetch('/api/order');
+      const ordersData = await response.json(); // Use 'ordersData' instead of 'data'
+      setOrders(ordersData);
+    };
+    fetchOrders();
+  }, []);
 
   return (
     <div>
-      <h1>Place Your Order</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Name:
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Email:
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Order Details:
-          <textarea
-            value={orderDetails}
-            onChange={(e) => setOrderDetails(e.target.value)}
-            required
-          ></textarea>
-        </label>
-        <button type="submit">Submit Order</button>
-      </form>
-      {message && <p>{message}</p>}
+      <h1>Orders</h1>
+      {orders.length === 0 ? (
+        <p>No orders found</p>
+      ) : (
+        <ul>
+          {orders.map((order) => (
+            <li key={order._id}>
+              {order.name} - {order.status}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
 
-export default OrderPage;
+export default OrdersPage;
 

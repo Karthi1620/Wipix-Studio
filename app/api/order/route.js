@@ -7,7 +7,8 @@ export async function GET() {
     const { db } = await connectToDatabase();
     const orders = await db.collection('orders').find({}).toArray();
     return new Response(JSON.stringify(orders), { status: 200 });
-  } catch (error) {
+  } catch (err) {
+    // Removed error variable as it's not being used
     return new Response('Error fetching orders', { status: 500 });
   }
 }

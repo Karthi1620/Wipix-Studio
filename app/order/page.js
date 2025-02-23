@@ -1,18 +1,19 @@
-// app/order/page.js
+'use client';  // Add this line to make this a client component
 
 import React, { useEffect, useState } from 'react';
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
 
+  // Fetch orders on component mount
   useEffect(() => {
     const fetchOrders = async () => {
       const response = await fetch('/api/order');
-      const ordersData = await response.json(); // Use 'ordersData' instead of 'data'
+      const ordersData = await response.json();
       setOrders(ordersData);
     };
     fetchOrders();
-  }, []);
+  }, []);  // Empty dependency array ensures it runs only once when the component mounts
 
   return (
     <div>

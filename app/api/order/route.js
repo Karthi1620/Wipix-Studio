@@ -1,15 +1,14 @@
-// app/api/orders/route.js
+// app/api/order/route.js
+
 import { connectToDatabase } from '../../../lib/mongodb';
 
-export async function GET(req) {
+export async function GET() {
   try {
     const { db } = await connectToDatabase();
-    
     const orders = await db.collection('orders').find({}).toArray();
-    return new Response(JSON.stringify({ orders }), { status: 200 });
+    return new Response(JSON.stringify(orders), { status: 200 });
   } catch (error) {
-    console.error('Error fetching orders:', error);
-    return new Response(JSON.stringify({ message: 'Failed to fetch orders' }), { status: 500 });
+    return new Response('Error fetching orders', { status: 500 });
   }
 }
 

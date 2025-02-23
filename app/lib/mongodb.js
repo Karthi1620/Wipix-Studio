@@ -1,34 +1,22 @@
 // lib/mongodb.js
+
 import { MongoClient } from 'mongodb';
 
-const MONGODB_URI = "mongodb+srv://sivakarthikeyan978:9I9HqAxDwEOPbauL@cluster0.n9k1c.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";  // Replace with your MongoDB URI
-const DB_NAME = 'wipix-studio';
-
-let cachedClient = null;
-let cachedDb = null;
-
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI');
-}
+const client = new MongoClient(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 export async function connectToDatabase() {
-  // If the client and database are already cached, return them
-  if (cachedClient && cachedDb) {
-    return { client: cachedClient, db: cachedDb };
+  try {
+    if (!client.isConnected()) {
+      await client.connect();
+    }
+    const db = client.db(process.env.MONGODB_DB);
+    return { db, client };
+  } catch (error) {
+    console.error('Database connection error:', error);
+    throw error;
   }
-
-  // Otherwise, create a new client and connect
-  const client = await MongoClient.connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-
-  const db = client.db(DB_NAME);
-
-  // Cache the client and db to avoid new connections on every request
-  cachedClient = client;
-  cachedDb = db;
-
-  return { client, db };
 }
 

@@ -1,11 +1,10 @@
-import { connectDB } from '@/lib/mongodb';  // Uncomment if using MongoDB
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+// import { connectDB } from '@/lib/mongodb'; // Keep the import if you're planning to use it later
 
 // GET method
 export async function GET(req, res) {
   try {
-    // If connectDB is required, call it here
-    // await connectDB();
-
     // Your API logic for GET request
     res.status(200).json({ message: 'Order route GET working!' });
   } catch (error) {
@@ -17,9 +16,6 @@ export async function GET(req, res) {
 // POST method
 export async function POST(req, res) {
   try {
-    // If connectDB is required, call it here
-    // await connectDB();
-
     // Your API logic for POST request
     res.status(200).json({ message: 'Order route POST working!' });
   } catch (error) {

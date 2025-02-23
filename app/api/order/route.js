@@ -1,5 +1,6 @@
-import { connectDB } from "@/app/lib/mongodb";
-import Order from "@/app/models/order";
+import { connectDB } from "@/lib/mongodb";
+import Order from "@/models/order";
+
 
 
 export async function POST(req) {

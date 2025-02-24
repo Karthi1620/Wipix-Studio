@@ -1,18 +1,22 @@
-import { connectToDatabase } from "@/utils/mongodb";
-import Order from "@/models/Order";
+import mongoose from "mongoose";
 
-export async function POST(req) {
+const MONGODB_URI = process.env.MONGODB_URI;
+
+export async function connectDB() {
+  if (mongoose.connection.readyState >= 1) {
+    return; // Already connected
+  }
+
   try {
-    const { name, email, description } = await req.json();
-    await connectToDatabase();
-
-    const newOrder = new Order({ name, email, description });
-    await newOrder.save();
-
-    return Response.json({ message: "Order placed successfully!" }, { status: 201 });
+    await mongoose.connect(MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000, // 5 seconds timeout
+    });
+    console.log("MongoDB Connected");
   } catch (error) {
-    console.error("Order API error:", error);
-    return Response.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error("MongoDB Connection Error:", error);
+    throw new Error("Database connection failed");
   }
 }
 

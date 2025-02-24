@@ -8,9 +8,8 @@ export default function OrderNow() {
   const [contact, setContact] = useState("");
   const [email, setEmail] = useState("");
   const [service, setService] = useState("");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState(""); // ✅ Keep this if used in the form
 
-  // Handle form submission and send data to the backend API
   const handleOrder = async () => {
     if (!name || !contact || !email || !service || !description) {
       alert("Please fill in all fields before placing an order.");
@@ -28,16 +27,16 @@ export default function OrderNow() {
           contact,
           email,
           service,
-          description,
+          description, // ✅ Make sure description is included here
         }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message); // Success message
+        alert(data.message);
       } else {
-        alert(data.error); // Error message
+        alert(data.error);
       }
     } catch (error) {
       console.error('Error placing order:', error);
@@ -48,7 +47,6 @@ export default function OrderNow() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-purple-800 to-purple-600 text-white p-6">
       
-      {/* Order Now Header */}
       <motion.h1
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -58,14 +56,12 @@ export default function OrderNow() {
         Order Now
       </motion.h1>
 
-      {/* Order Form Card */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8 }}
         className="bg-white text-black p-6 rounded-xl shadow-lg w-full max-w-md"
       >
-        {/* Name Input */}
         <label className="block text-lg font-semibold mb-2">Name:</label>
         <input
           type="text"
@@ -75,7 +71,6 @@ export default function OrderNow() {
           onChange={(e) => setName(e.target.value)}
         />
 
-        {/* Contact Number Input */}
         <label className="block text-lg font-semibold mt-4 mb-2">Contact Number:</label>
         <input
           type="tel"
@@ -85,7 +80,6 @@ export default function OrderNow() {
           onChange={(e) => setContact(e.target.value)}
         />
 
-        {/* Email Input */}
         <label className="block text-lg font-semibold mt-4 mb-2">Email:</label>
         <input
           type="email"
@@ -95,7 +89,6 @@ export default function OrderNow() {
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        {/* Service Selection */}
         <label className="block text-lg font-semibold mt-4 mb-2">Select a Service:</label>
         <select
           className="w-full p-3 border rounded-lg bg-gray-100 text-black font-semibold shadow-sm focus:outline-none"
@@ -108,7 +101,14 @@ export default function OrderNow() {
           <option value="Poster Design">Poster Design</option>
         </select>
 
-        {/* Submit Button */}
+        <label className="block text-lg font-semibold mt-4 mb-2">Description:</label>
+        <textarea
+          className="w-full p-3 border rounded-lg bg-gray-100 text-black font-semibold shadow-sm focus:outline-none"
+          placeholder="Describe your requirements"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)} // ✅ Ensure this is used
+        ></textarea>
+
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}

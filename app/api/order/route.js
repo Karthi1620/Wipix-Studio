@@ -1,27 +1,18 @@
-import { NextResponse } from "next/server";
-import { MongoClient } from "mongodb";
-
-// Connect to MongoDB
-const MONGODB_URI = "your_mongodb_connection_string";
-const client = new MongoClient(MONGODB_URI);
+import { connectToDatabase } from "@/utils/mongodb";
+import Order from "@/models/Order";
 
 export async function POST(req) {
   try {
-    const { name, contact, email, service, description } = await req.json();
+    const { name, email, description } = await req.json();
+    await connectToDatabase();
 
-    if (!name || !contact || !email || !service || !description) {
-      return NextResponse.json({ error: "All fields are required!" }, { status: 400 });
-    }
+    const newOrder = new Order({ name, email, description });
+    await newOrder.save();
 
-    await client.connect();
-    const db = client.db("WipixStudio"); // Database Name
-    const collection = db.collection("Orders");
-
-    await collection.insertOne({ name, contact, email, service, description, status: "Pending", createdAt: new Date() });
-
-    return NextResponse.json({ message: "Order placed successfully!" }, { status: 201 });
+    return Response.json({ message: "Order placed successfully!" }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to process order." }, { status: 500 });
+    console.error("Order API error:", error);
+    return Response.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 

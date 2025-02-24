@@ -1,29 +1,27 @@
-// app/api/order/route.js
-
 import { NextResponse } from "next/server";
+import { MongoClient } from "mongodb";
 
-// This will handle POST requests to create an order
+// Connect to MongoDB
+const MONGODB_URI = "your_mongodb_connection_string";
+const client = new MongoClient(MONGODB_URI);
+
 export async function POST(req) {
   try {
     const { name, contact, email, service, description } = await req.json();
 
-    // You can save this data to your database (e.g., MongoDB) here
-    // Example (pseudo code):
-    // await db.collection('orders').insertOne({ name, contact, email, service, description });
+    if (!name || !contact || !email || !service || !description) {
+      return NextResponse.json({ error: "All fields are required!" }, { status: 400 });
+    }
 
-    console.log('New Order:', {
-      name,
-      contact,
-      email,
-      service,
-      description
-    });
+    await client.connect();
+    const db = client.db("WipixStudio"); // Database Name
+    const collection = db.collection("Orders");
 
-    // Return success response
-    return NextResponse.json({ message: "Order placed successfully!" }, { status: 200 });
+    await collection.insertOne({ name, contact, email, service, description, status: "Pending", createdAt: new Date() });
+
+    return NextResponse.json({ message: "Order placed successfully!" }, { status: 201 });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Failed to place the order" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to process order." }, { status: 500 });
   }
 }
 

@@ -1,4 +1,3 @@
-// app/order/page.js
 "use client";
 
 import { useState } from "react";
@@ -11,12 +10,39 @@ export default function OrderNow() {
   const [service, setService] = useState("");
   const [description, setDescription] = useState("");
 
-  const handleOrder = () => {
+  // Handle form submission and send data to the backend API
+  const handleOrder = async () => {
     if (!name || !contact || !email || !service || !description) {
       alert("Please fill in all fields before placing an order.");
       return;
     }
-    alert(`Order placed successfully!\n\nName: ${name}\nContact: ${contact}\nEmail: ${email}\nService: ${service}\nDescription: ${description}`);
+
+    try {
+      const response = await fetch('/api/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          contact,
+          email,
+          service,
+          description,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message); // Success message
+      } else {
+        alert(data.error); // Error message
+      }
+    } catch (error) {
+      console.error('Error placing order:', error);
+      alert('Something went wrong. Please try again.');
+    }
   };
 
   return (

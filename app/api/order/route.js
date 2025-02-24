@@ -1,13 +1,29 @@
-import { connectToDatabase } from '../../../lib/mongodb';
+// app/api/order/route.js
 
-export async function GET() {  // Removed 'request' from the parameter as it's not used
+import { NextResponse } from "next/server";
+
+// This will handle POST requests to create an order
+export async function POST(req) {
   try {
-    const { db } = await connectToDatabase();
-    const orders = await db.collection('orders').find().toArray();
-    return new Response(JSON.stringify(orders), { status: 200 });
-  } catch (err) {
-    console.error(err); // Log the error for debugging purposes
-    return new Response('Error fetching orders', { status: 500 });
+    const { name, contact, email, service, description } = await req.json();
+
+    // You can save this data to your database (e.g., MongoDB) here
+    // Example (pseudo code):
+    // await db.collection('orders').insertOne({ name, contact, email, service, description });
+
+    console.log('New Order:', {
+      name,
+      contact,
+      email,
+      service,
+      description
+    });
+
+    // Return success response
+    return NextResponse.json({ message: "Order placed successfully!" }, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Failed to place the order" }, { status: 500 });
   }
 }
 

@@ -1,13 +1,16 @@
-"use client";
+// app/page.js
+
+"use client";  // This is necessary for using client-side features
 
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { FaLinkedin, FaInstagram, FaFacebook } from 'react-icons/fa';
+import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa"; // Correct import
+import Quote from "../components/Quote";  // Ensure this path is correct
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center text-center p-6 relative bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500">
+    <main className="min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white p-6 flex flex-col items-center justify-center">
       {/* Logo & Title Section */}
       <motion.div
         initial={{ opacity: 0, y: -40 }}
@@ -24,7 +27,7 @@ export default function Home() {
             objectFit="cover"
           />
         </div>
-        <h1 className="text-5xl font-extrabold mt-4 drop-shadow-lg text-white">
+        <h1 className="text-5xl font-extrabold mt-4 drop-shadow-lg">
           Wipix Studio
         </h1>
       </motion.div>
@@ -34,10 +37,10 @@ export default function Home() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.5 }}
-        className="mb-8 max-w-xl"
+        className="mb-8 max-w-xl text-center"
       >
-        <h2 className="text-2xl font-semibold text-white">Welcome to Wipix Studio</h2>
-        <p className="mt-3 text-lg text-white">
+        <h2 className="text-2xl font-semibold">Welcome to Wipix Studio</h2>
+        <p className="mt-3 text-lg">
           We specialize in <span className="font-bold">Web Development</span>,{" "}
           <span className="font-bold">UI/UX Design</span>, and{" "}
           <span className="font-bold">Poster Design</span>.
@@ -49,7 +52,7 @@ export default function Home() {
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, delay: 1 }}
-        className="flex gap-4 mb-10"
+        className="flex gap-4 mb-10 justify-center"
       >
         <Link href="/order">
           <motion.button
@@ -160,9 +163,14 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="mt-6 text-sm text-gray-400">
+      <footer className="mt-6 text-sm text-gray-400 text-center">
         ©️ 2025 Wipix Studio. All rights reserved.
       </footer>
+
+      {/* Quote Component */}
+      <div className="mt-12 text-center bg-gray-800 p-6 rounded-xl">
+        <Quote /> {/* Display Quote at the bottom of the page */}
+      </div>
     </main>
   );
 }

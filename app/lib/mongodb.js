@@ -1,22 +1,27 @@
-// lib/mongodb.js
+// /lib/mongodb.js
 
-import { MongoClient } from 'mongodb';
+import mongoose from "mongoose";
 
-const client = new MongoClient(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const MONGO_URI = process.env.MONGO_URI; // Your MongoDB URI from .env.local
 
-export async function connectToDatabase() {
+export const connectToDataBase = async () => {
   try {
-    if (!client.isConnected()) {
-      await client.connect();
+    // Check if already connected to MongoDB
+    if (mongoose.connections[0].readyState) {
+      console.log("Already connected to MongoDB.");
+      return;
     }
-    const db = client.db(process.env.MONGODB_DB);
-    return { db, client };
+
+    // Connect to MongoDB
+    await mongoose.connect(MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+
+    console.log("Connected to MongoDB successfully!");
   } catch (error) {
-    console.error('Database connection error:', error);
-    throw error;
+    console.error("Error connecting to MongoDB:", error);
+    throw new Error("Failed to connect to MongoDB");
   }
-}
+};
 

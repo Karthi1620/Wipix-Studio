@@ -1,24 +1,37 @@
-// app/api/contact/route.js
-import Contact from '@/models/contact'; // Correct import path
-// If you need to connect to the database, make sure the connection function is used properly
+// /app/api/contact/route.js
+
+import { connectToDataBase } from "@/lib/mongodb";  // Import MongoDB connection function
+import Contact from "@/models/contact";             // Import Contact model
 
 export async function POST(req) {
   try {
-    const { name, email, message } = await req.json(); // Get data from the request
+    const { name, email, message } = await req.json();
+    console.log("Received contact data:", { name, email, message }); // Log for debugging
 
-    // Create a new contact entry
+    if (!name || !email || !message) {
+      return new Response(JSON.stringify({ message: "All fields are required!" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    await connectToDataBase();  // Ensure MongoDB is connected
+
     const newContact = new Contact({ name, email, message });
+    await newContact.save(); // Save contact to DB
 
-    // Save to the database
-    await newContact.save();
+    console.log("Contact saved successfully:", { name, email, message });
 
-    // Return a success response
-    return new Response(JSON.stringify({ message: 'Message sent successfully!' }), { status: 200 });
+    return new Response(JSON.stringify({ message: "Message received successfully!" }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
-    console.error('Error:', error);  // Log the error for debugging
-
-    // Return an error response
-    return new Response(JSON.stringify({ message: 'Error occurred while sending message.' }), { status: 500 });
+    console.error("Error processing contact message:", error); // Log error
+    return new Response(JSON.stringify({ message: "Internal Server Error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
 

@@ -1,9 +1,12 @@
-// /app/api/order/route.js
+import { connectToDatabase } from '@/lib/mongodb';
+import Order from '@/models/order';
 
 export async function POST(req) {
   try {
     const { name, email, description } = await req.json();
-    console.log("Order received:", { name, email, description }); // Log order data
+
+    // Log the incoming order data
+    console.log('Order Data:', { name, email, description });
 
     if (!name || !email || !description) {
       return new Response(JSON.stringify({ message: "All fields are required!" }), {
@@ -12,15 +15,23 @@ export async function POST(req) {
       });
     }
 
-    // Simulate saving the order to DB (replace with actual DB logic)
-    console.log("Order saved:", { name, email, description });
+    // Connect to database
+    const db = await connectToDatabase();
+
+    // Simulate saving order to database
+    const newOrder = new Order({ name, email, description });
+    await newOrder.save();
+
+    // Log success
+    console.log('Order received and saved successfully!');
 
     return new Response(JSON.stringify({ message: "Order received successfully!" }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error processing order:", error); // Log error
+    // Log any errors
+    console.error('Error in Order API:', error);
     return new Response(JSON.stringify({ message: "Internal Server Error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

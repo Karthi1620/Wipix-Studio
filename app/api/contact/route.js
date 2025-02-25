@@ -1,12 +1,12 @@
-// /app/api/contact/route.js
-
-import { connectToDataBase } from "@/lib/mongodb";  // Import MongoDB connection function
-import Contact from "@/models/contact";             // Import Contact model
+import { connectToDatabase } from '@/lib/mongodb';
+import Contact from '@/models/contact';
 
 export async function POST(req) {
   try {
     const { name, email, message } = await req.json();
-    console.log("Received contact data:", { name, email, message }); // Log for debugging
+
+    // Log the incoming request data
+    console.log('Contact Form Data:', { name, email, message });
 
     if (!name || !email || !message) {
       return new Response(JSON.stringify({ message: "All fields are required!" }), {
@@ -15,19 +15,23 @@ export async function POST(req) {
       });
     }
 
-    await connectToDataBase();  // Ensure MongoDB is connected
+    // Connect to database
+    const db = await connectToDatabase();
 
+    // Save contact form data to the database
     const newContact = new Contact({ name, email, message });
-    await newContact.save(); // Save contact to DB
+    await newContact.save();
 
-    console.log("Contact saved successfully:", { name, email, message });
+    // Log success
+    console.log('Contact form submitted successfully!');
 
-    return new Response(JSON.stringify({ message: "Message received successfully!" }), {
+    return new Response(JSON.stringify({ message: "Contact form submitted successfully!" }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error processing contact message:", error); // Log error
+    // Log any errors
+    console.error('Error in Contact API:', error);
     return new Response(JSON.stringify({ message: "Internal Server Error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

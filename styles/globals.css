@@ -65,3 +65,14 @@ a:hover {
   background: #aaa;
 }
 
+/* Animation for smooth fade-in */
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Add animation to the entire page */
+body {
+  animation: fadeIn 1s ease-out;
+}
+

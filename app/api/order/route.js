@@ -1,23 +1,20 @@
 export async function POST(req) {
   try {
-    console.log("🛒 Received a POST request to /api/order");
+    console.log("📩 Received a POST request for Order");
 
-    const body = await req.text();
-    console.log("📜 Raw request body:", body);
+    const { name, email, contact, serviceType, message } = await req.json();
 
-    const { name, email, description } = JSON.parse(body);
-
-    if (!name || !email || !description) {
-      console.log("⚠️ Missing required fields:", { name, email, description });
+    if (!name || !email || !contact || !serviceType || !message) {
+      console.log("❌ Missing required fields:", { name, email, contact, serviceType, message });
       return new Response(JSON.stringify({ message: "All fields are required!" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    console.log("✅ Order submitted successfully:", { name, email, description });
+    console.log("✅ Order received:", { name, email, contact, serviceType, message });
 
-    return new Response(JSON.stringify({ message: "Order received successfully!" }), {
+    return new Response(JSON.stringify({ message: "Order logged successfully!" }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });

@@ -1,17 +1,21 @@
 "use client";
 import { useState } from "react";
 
-export default function OrderPage() {
+export default function OrderForm() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    contact: "", // Added contact number
     serviceType: "",
-    description: "",
+    message: "",
   });
+
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("📤 Submitting order with data:", formData);
+    console.log("📤 Submitting order form with data:", formData);
+    setLoading(true);
 
     try {
       const response = await fetch("/api/order", {
@@ -20,24 +24,23 @@ export default function OrderPage() {
         body: JSON.stringify(formData),
       });
 
-      console.log("📩 Response status:", response.status);
-
       const data = await response.json();
       console.log("✅ API Response Data:", data);
-
-      alert(data.message || data.error);
+      alert(data.message || "Something went wrong");
 
       if (response.ok) {
-        setFormData({ name: "", email: "", serviceType: "", description: "" });
+        setFormData({ name: "", email: "", contact: "", serviceType: "", message: "" });
       }
     } catch (error) {
-      console.error("❌ Error submitting order:", error);
+      console.error("❌ Error submitting order form:", error);
     }
+
+    setLoading(false);
   };
 
   return (
-    <div className="container mx-auto p-6 text-black"> {/* Changed text color for visibility */}
-      <h1 className="text-3xl font-bold text-gray-900">Place an Order</h1>
+    <div className="container mx-auto p-6 text-black">
+      <h1 className="text-3xl font-bold text-gray-900">Place Your Order</h1>
       <form onSubmit={handleSubmit} className="mt-4 space-y-4 bg-white p-4 shadow-md rounded-md">
         <input
           type="text"
@@ -55,27 +58,31 @@ export default function OrderPage() {
           className="w-full p-2 border rounded text-black"
           required
         />
-        {/* New Service Type Dropdown */}
-        <select
-          value={formData.serviceType}
-          onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}
-          className="w-full p-2 border rounded text-black bg-white"
-          required
-        >
-          <option value="" disabled>Select Service Type</option>
-          <option value="Web Development">Web Development</option>
-          <option value="UI/UX Design">UI/UX Design</option>
-          <option value="Graphic Design">Graphic Design</option>
-        </select>
-        <textarea
-          placeholder="Order Description"
-          value={formData.description}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+        <input
+          type="text"
+          placeholder="Your Contact Number"
+          value={formData.contact}
+          onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
           className="w-full p-2 border rounded text-black"
           required
         />
-        <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded w-full">
-          Place Order
+        <input
+          type="text"
+          placeholder="Service Type"
+          value={formData.serviceType}
+          onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}
+          className="w-full p-2 border rounded text-black"
+          required
+        />
+        <textarea
+          placeholder="Your Message"
+          value={formData.message}
+          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+          className="w-full p-2 border rounded text-black"
+          required
+        />
+        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded w-full" disabled={loading}>
+          {loading ? "Submitting..." : "Submit Order"}
         </button>
       </form>
     </div>

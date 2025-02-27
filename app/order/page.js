@@ -1,82 +1,84 @@
 "use client";
-import React, { useState } from 'react';
+import { useState } from "react";
 
-const OrderPage = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [service, setService] = useState('');
+export default function OrderPage() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    serviceType: "",
+    description: "",
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert(`Name: ${name}\nEmail: ${email}\nMessage: ${message}\nService: ${service}`);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    console.log("📤 Submitting order with data:", formData);
+
+    try {
+      const response = await fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      console.log("📩 Response status:", response.status);
+
+      const data = await response.json();
+      console.log("✅ API Response Data:", data);
+
+      alert(data.message || data.error);
+
+      if (response.ok) {
+        setFormData({ name: "", email: "", serviceType: "", description: "" });
+      }
+    } catch (error) {
+      console.error("❌ Error submitting order:", error);
+    }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-primary to-background">
-      <h1 className="text-4xl font-semibold mb-6 animate__animated animate__fadeIn">Order Your Service</h1>
-
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <div className="mb-4">
-          <label htmlFor="name" className="block text-gray-700 font-medium mb-2">Name</label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your name"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-gray-700 font-medium mb-2">Email</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your email"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="message" className="block text-gray-700 font-medium mb-2">Message</label>
-          <textarea
-            id="message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your message"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="service" className="block text-gray-700 font-medium mb-2">Service Type</label>
-          <select
-            id="service"
-            value={service}
-            onChange={(e) => setService(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Select Service</option>
-            <option value="UI/UX Design">UI/UX Design</option>
-            <option value="Web Development">Web Development</option>
-            <option value="Poster Design">Poster Design</option>
-            <option value="Logo Design">Logo Design</option>
-          </select>
-        </div>
-
-        <div className="text-center">
-          <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition ease-in-out duration-200">
-            Submit
-          </button>
-        </div>
+    <div className="container mx-auto p-6 text-black"> {/* Changed text color for visibility */}
+      <h1 className="text-3xl font-bold text-gray-900">Place an Order</h1>
+      <form onSubmit={handleSubmit} className="mt-4 space-y-4 bg-white p-4 shadow-md rounded-md">
+        <input
+          type="text"
+          placeholder="Your Name"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          className="w-full p-2 border rounded text-black"
+          required
+        />
+        <input
+          type="email"
+          placeholder="Your Email"
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          className="w-full p-2 border rounded text-black"
+          required
+        />
+        {/* New Service Type Dropdown */}
+        <select
+          value={formData.serviceType}
+          onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}
+          className="w-full p-2 border rounded text-black bg-white"
+          required
+        >
+          <option value="" disabled>Select Service Type</option>
+          <option value="Web Development">Web Development</option>
+          <option value="UI/UX Design">UI/UX Design</option>
+          <option value="Graphic Design">Graphic Design</option>
+        </select>
+        <textarea
+          placeholder="Order Description"
+          value={formData.description}
+          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          className="w-full p-2 border rounded text-black"
+          required
+        />
+        <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded w-full">
+          Place Order
+        </button>
       </form>
     </div>
   );
-};
-
-export default OrderPage;
+}
 
